@@ -28,8 +28,8 @@ class ValueDateCalculator {
         return this
     }
 
-    fun setHolidays(ccy: String, ccyHolidays: Set<LocalDate>): ValueDateCalculator {
-        holidays.put(ccy.toUpperCase(), ccyHolidays)
+    fun setHolidays(ccy: String, dates: Set<LocalDate>): ValueDateCalculator {
+        holidays.put(ccy.toUpperCase(), dates)
         return this
     }
 
@@ -48,19 +48,19 @@ class ValueDateCalculator {
     }
 
     private tailrec fun nextBizDate(
-        holidays1: Set<LocalDate>,
-        holidays2: Set<LocalDate>,
+        hols1: Set<LocalDate>,
+        hols2: Set<LocalDate>,
         date: LocalDate,
         addDays: Long
     ): LocalDate {
         return when {
             date.dayOfWeek in WEEKENDS ||
-            holidays1.contains(date) ||
-            holidays2.contains(date) ->
-                nextBizDate(holidays1, holidays2, date.plusDays(1L), addDays)
+                hols1.contains(date) ||
+                hols2.contains(date) ->
+                nextBizDate(hols1, hols2, date.plusDays(1L), addDays)
 
             addDays > 0L ->
-                nextBizDate(holidays1, holidays2, date.plusDays(1L), addDays - 1)
+                nextBizDate(hols1, hols2, date.plusDays(1L), addDays - 1)
 
             else ->
                 date

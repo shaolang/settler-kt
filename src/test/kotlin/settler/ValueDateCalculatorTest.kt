@@ -16,24 +16,22 @@
 package settler
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNot
 import io.kotest.matchers.collections.contain
 import io.kotest.matchers.longs.exactly
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNot
 import io.kotest.property.Arb
-import io.kotest.property.checkAll
-import io.kotest.property.forAll
 import io.kotest.property.arbitrary.arb
-import io.kotest.property.arbitrary.bind
 import io.kotest.property.arbitrary.localDate
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.set
-import io.kotest.property.arbitrary.string
 import io.kotest.property.arbitrary.stringPattern
-import java.time.LocalDate
+import io.kotest.property.checkAll
+import io.kotest.property.forAll
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
+import java.time.LocalDate
 
 class ValueDateCalculatorTest : StringSpec({
     "spot does not value on weekends" {
@@ -49,9 +47,11 @@ class ValueDateCalculatorTest : StringSpec({
 
         checkAll(genTradeDate, genCurrencyPair) { tradeDate, pair ->
             val valueDate = calc.spotFor(tradeDate, pair)
-            val days = tradeDate.datesUntil(valueDate.plusDays(1L)).
-            filter({ d: LocalDate -> d.dayOfWeek !in setOf(SATURDAY, SUNDAY)}).
-            count() - 1
+            val days = tradeDate.datesUntil(valueDate.plusDays(1L))
+                .filter({ d: LocalDate ->
+                    d.dayOfWeek !in setOf(SATURDAY, SUNDAY)
+                })
+                .count() - 1
 
             days shouldBe exactly(2L)
         }
@@ -59,7 +59,7 @@ class ValueDateCalculatorTest : StringSpec({
 
     "USDCAD is normally T+1 from trade (assuming no holidays)" {
         val calc = ValueDateCalculator().setSpotLag("USDCAD", 1L)
-        val tradeDate = LocalDate.of(2020, 6, 1)       // Monday
+        val tradeDate = LocalDate.of(2020, 6, 1) // Monday
         val valueDate = calc.spotFor(tradeDate, "USDCAD")
 
         valueDate shouldBe LocalDate.of(2020, 6, 2)
@@ -70,7 +70,8 @@ class ValueDateCalculatorTest : StringSpec({
 
         checkAll(
             genCurrencyPair,
-            let(genTradeDate,::genHolidays, ::genHolidays)) { pair, gens ->
+            let(genTradeDate, ::genHolidays, ::genHolidays)
+        ) { pair, gens ->
             val (tradeDate, baseHolidays, termHolidays) = gens
             val baseCcy = pair.substring(0, 3)
             val termCcy = pair.substring(3, 6)
@@ -91,12 +92,12 @@ private val genTradeDate = Arb.localDate(minYear = 2020)
 
 private val genCurrency = Arb.stringPattern("[A-Z0-9]{3}")
 
-private val genCurrencyPair = Arb.set(genCurrency, range=2..2).map { ss ->
-    ss.joinTo(StringBuilder(), separator="").toString()
+private val genCurrencyPair = Arb.set(genCurrency, range = 2..2).map { ss ->
+    ss.joinTo(StringBuilder(), separator = "").toString()
 }
 
 private fun genHolidays(date: LocalDate): Arb<Set<LocalDate>> {
-    return Arb.set(Arb.long(min=1, max=10), range=0..10).map { ns ->
+    return Arb.set(Arb.long(min = 1, max = 10), range = 0..10).map { ns ->
         ns.map { n -> date.plusDays(n) }.toSet()
     }
 }
