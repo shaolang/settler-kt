@@ -37,32 +37,30 @@ class ValueDateCalculator {
         val spotLag = spotLags.getOrDefault(pair, 2L)
         val baseCcy = pair.substring(0, 3)
         val baseHolidays = holidays.getOrDefault(baseCcy, NO_HOLIDAYS)
-        val baseVD = nextBizDate(baseHolidays, tradeDate, spotLag)
+        val baseVD = nextBizDate(baseHolidays, emptySet(), tradeDate, spotLag)
 
         val termCcy = pair.substring(3, 6)
         val termHolidays = holidays.getOrDefault(termCcy, NO_HOLIDAYS)
-        val termVD = nextBizDate(termHolidays, tradeDate, spotLag)
+        val termVD = nextBizDate(termHolidays, emptySet(), tradeDate, spotLag)
         val candidate = if (baseVD.isBefore(termVD)) { termVD } else { baseVD }
 
-        val allHolidays = baseHolidays.toSet().union(termHolidays)
-
-        return nextBizDate(
-            allHolidays,
-            candidate,
-            0L)
+        return nextBizDate(baseHolidays, termHolidays, candidate, 0L)
     }
 
     private tailrec fun nextBizDate(
-        holidays: Set<LocalDate>,
+        holidays1: Set<LocalDate>,
+        holidays2: Set<LocalDate>,
         date: LocalDate,
         addDays: Long
     ): LocalDate {
         return when {
-            date.dayOfWeek in WEEKENDS || holidays.contains(date) ->
-                nextBizDate(holidays, date.plusDays(1L), addDays)
+            date.dayOfWeek in WEEKENDS ||
+            holidays1.contains(date) ||
+            holidays2.contains(date) ->
+                nextBizDate(holidays1, holidays2, date.plusDays(1L), addDays)
 
             addDays > 0L ->
-                nextBizDate(holidays, date.plusDays(1L), addDays - 1)
+                nextBizDate(holidays1, holidays2, date.plusDays(1L), addDays - 1)
 
             else ->
                 date
