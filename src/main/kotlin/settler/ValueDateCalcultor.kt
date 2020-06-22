@@ -21,14 +21,18 @@ import java.time.LocalDate
 
 class ValueDateCalculator {
     fun spotFor(tradeDate: LocalDate, _pair: String): LocalDate {
-        return nextBizDate(tradeDate)
+        return nextBizDate(tradeDate, 2)
     }
 
-    private tailrec fun nextBizDate(date: LocalDate): LocalDate {
-        return if (date.dayOfWeek in setOf(SATURDAY, SUNDAY)) {
-            nextBizDate(date.plusDays(1L))
-        } else {
-            date
+    private tailrec fun nextBizDate(date: LocalDate, addDays: Long): LocalDate {
+        return when {
+            date.dayOfWeek in WEEKENDS -> nextBizDate(date.plusDays(1L), addDays)
+            addDays == 0L -> date
+            else -> nextBizDate(date.plusDays(1L), addDays - 1)
         }
+    }
+
+    private companion object {
+        val WEEKENDS = setOf(SATURDAY, SUNDAY)
     }
 }
