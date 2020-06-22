@@ -25,6 +25,7 @@ import io.kotest.property.arbitrary.stringPattern
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
+import kotlin.ranges.IntRange
 
 val genCurrency = Arb.stringPattern("[A-Z0-9]{3}")
 
@@ -32,8 +33,9 @@ val genCurrencyPair = Arb.set(genCurrency, range = 2..2).map { ss ->
     ss.joinTo(StringBuilder(), separator = "").toString()
 }
 
-fun genHolidays(date: LocalDate): Arb<Set<LocalDate>> {
-    return Arb.set(Arb.long(min = 1, max = 10), range = 0..10).map { ns ->
+fun genHolidays(date: LocalDate): Arb<Set<LocalDate>> = genHolidays(date, 0..10)
+fun genHolidays(date: LocalDate, range: IntRange): Arb<Set<LocalDate>> {
+    return Arb.set(Arb.long(min = 1, max = 10), range).map { ns ->
         ns.map { n -> date.plusDays(n) }.toSet()
     }
 }
@@ -52,6 +54,18 @@ fun genTradeDate(allowWeekends: Boolean = true): Arb<LocalDate> {
         })
     }
 }
+
+fun <A, B> let(genA: Arb<A>, genBFn: (A) -> Arb<B>): Arb<Pair<A, B>> = arb {
+    val iterA = genA.generate(it).iterator()
+
+    generateSequence {
+        val a = iterA.next().value
+        val b = genBFn(a).generate(it).iterator().next().value
+
+        Pair(a, b)
+    }
+}
+
 fun <A, B, C> let(
     genA: Arb<A>,
     genBFn: (A) -> Arb<B>,
