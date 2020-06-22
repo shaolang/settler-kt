@@ -84,7 +84,7 @@ class ValueDateCalculatorTest : StringSpec({
         }
     }
 
-    "USD holidays on T+1 is considered as good biz day" {
+    "USD holidays on T+1 is considered as good biz day for pairs with USD" {
         val calc = ValueDateCalculator()
 
         checkAll(genTradeDate(false), genCurrency) { tradeDate, ccy ->
@@ -98,6 +98,24 @@ class ValueDateCalculatorTest : StringSpec({
                 .count() - 1
 
             days shouldBe 2L
+        }
+    }
+
+    "spot never falls on USD holidays even for crosses" {
+        val calc = ValueDateCalculator()
+
+        checkAll(
+            genCurrencyPair,
+            let(genTradeDate, ::genHolidays, ::genHolidays)
+        ) { pair, (tradeDate, usdHolidays, baseHolidays) ->
+            val baseCcy = pair.substring(0, 3)
+
+            calc.setHolidays("USD", usdHolidays)
+            calc.setHolidays(baseCcy, baseHolidays)
+
+            val allHolidays = baseHolidays.toSet().union(usdHolidays)
+
+            allHolidays shouldNot contain(calc.spotFor(tradeDate, pair))
         }
     }
 })

@@ -38,39 +38,50 @@ class ValueDateCalculator {
         val baseCcy = pair.substring(0, 3)
         val baseHolidays = holidays.getOrDefault(baseCcy, NO_HOLIDAYS)
         val baseVD = nextBizDate(
-            baseCcy, baseHolidays, emptySet(), tradeDate,
+            baseCcy, baseHolidays, NO_HOLIDAYS, NO_HOLIDAYS, tradeDate,
             spotLag
         )
 
         val termCcy = pair.substring(3, 6)
         val termHolidays = holidays.getOrDefault(termCcy, NO_HOLIDAYS)
         val termVD = nextBizDate(
-            termCcy, termHolidays, emptySet(), tradeDate,
+            termCcy, termHolidays, NO_HOLIDAYS, NO_HOLIDAYS, tradeDate,
             spotLag
         )
         val candidate = if (baseVD.isBefore(termVD)) { termVD } else { baseVD }
+        val usdHols = holidays.getOrDefault("USD", NO_HOLIDAYS)
 
-        return nextBizDate("", baseHolidays, termHolidays, candidate, 0L)
+        return nextBizDate("", baseHolidays, termHolidays, usdHols, candidate, 0L)
     }
 
     private tailrec fun nextBizDate(
         ccy: String,
         hols1: Set<LocalDate>,
         hols2: Set<LocalDate>,
+        usdHols: Set<LocalDate>,
         date: LocalDate,
         addDays: Long
     ): LocalDate {
         return when {
             date.dayOfWeek !in WEEKENDS && ccy == "USD" && addDays == 1L ->
-                nextBizDate(ccy, hols1, hols2, date.plusDays(1L), addDays - 1)
+                nextBizDate(
+                    ccy, hols1, hols2, usdHols, date.plusDays(1L), addDays - 1
+                )
 
             date.dayOfWeek in WEEKENDS ||
                 hols1.contains(date) ||
                 hols2.contains(date) ->
-                nextBizDate(ccy, hols1, hols2, date.plusDays(1L), addDays)
+                nextBizDate(
+                    ccy, hols1, hols2, usdHols, date.plusDays(1L), addDays
+                )
 
             addDays > 0L ->
-                nextBizDate(ccy, hols1, hols2, date.plusDays(1L), addDays - 1)
+                nextBizDate(
+                    ccy, hols1, hols2, usdHols, date.plusDays(1L), addDays - 1
+                )
+
+            addDays == 0L && date in usdHols ->
+                nextBizDate(ccy, hols1, hols2, usdHols, date.plusDays(1L), 0)
 
             else ->
                 date
