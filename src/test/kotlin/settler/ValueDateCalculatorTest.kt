@@ -83,11 +83,26 @@ class ValueDateCalculatorTest : StringSpec({
             allHolidays shouldNot contain(calc.spotFor(tradeDate, pair))
         }
     }
+
+    "USD holidays on T+1 is considered as good biz day" {
+        val calc = ValueDateCalculator()
+
+        checkAll(genTradeDate(false), genCurrency) { tradeDate, ccy ->
+            val usdHolidays = setOf(tradeDate.plusDays(1L))
+            calc.setHolidays("USD", usdHolidays)
+            val valueDate = calc.spotFor(tradeDate, "USD$ccy")
+            val days = tradeDate.datesUntil(valueDate.plusDays(1L))
+                .filter({ d: LocalDate ->
+                    d.dayOfWeek !in setOf(SATURDAY, SUNDAY)
+                })
+                .count() - 1
+
+            days shouldBe 2L
+        }
+    }
 })
 
 // generators
-
-private val genTradeDate = Arb.localDate(minYear = 2020)
 
 private val genCurrency = Arb.stringPattern("[A-Z0-9]{3}")
 
@@ -98,6 +113,21 @@ private val genCurrencyPair = Arb.set(genCurrency, range = 2..2).map { ss ->
 private fun genHolidays(date: LocalDate): Arb<Set<LocalDate>> {
     return Arb.set(Arb.long(min = 1, max = 10), range = 0..10).map { ns ->
         ns.map { n -> date.plusDays(n) }.toSet()
+    }
+}
+
+private val genTradeDate = Arb.localDate(minYear = 2020)
+private fun genTradeDate(allowWeekends: Boolean = true): Arb<LocalDate> {
+    val gen = Arb.localDate(minYear = 2020)
+
+    return if (allowWeekends) {
+        gen
+    } else {
+        gen.map({ d ->
+            d.datesUntil(d.plusDays(7L)).filter { x ->
+                x.dayOfWeek !in setOf(SATURDAY, SUNDAY)
+            }.findFirst().get()
+        })
     }
 }
 
