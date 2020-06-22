@@ -89,7 +89,7 @@ class ValueDateCalculator {
     }
 
     private companion object {
-        val WEEKENDS = setOf(SATURDAY, SUNDAY)
-        val NO_HOLIDAYS: Set<LocalDate> = emptySet()
+        @JvmField val WEEKENDS = setOf(SATURDAY, SUNDAY)
+        @JvmField val NO_HOLIDAYS: Set<LocalDate> = emptySet()
     }
 }
