@@ -80,7 +80,7 @@ class ValueDateCalculator {
                     ccy, hols1, hols2, usdHols, date.plusDays(1L), addDays - 1
                 )
 
-            addDays == 0L && date in usdHols ->
+            date in usdHols ->
                 nextBizDate(ccy, hols1, hols2, usdHols, date.plusDays(1L), 0)
 
             else ->
