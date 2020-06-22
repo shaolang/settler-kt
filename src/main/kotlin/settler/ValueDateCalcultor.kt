@@ -20,8 +20,16 @@ import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
 
 class ValueDateCalculator {
-    fun spotFor(tradeDate: LocalDate, _pair: String): LocalDate {
-        return nextBizDate(tradeDate, 2)
+    private val spotLags: MutableMap<String, Long> = mutableMapOf()
+
+    fun setSpotLag(pair: String, spotLag: Long): ValueDateCalculator {
+        spotLags.put(pair.toUpperCase(), spotLag)
+        return this
+    }
+
+    fun spotFor(tradeDate: LocalDate, pair: String): LocalDate {
+        val spotLag = spotLags.getOrElse(pair) { 2L }
+        return nextBizDate(tradeDate, spotLag)
     }
 
     private tailrec fun nextBizDate(date: LocalDate, addDays: Long): LocalDate {

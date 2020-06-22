@@ -49,6 +49,14 @@ class ValueDateCalculatorTest : StringSpec({
             days shouldBe exactly(2L)
         }
     }
+
+    "USDCAD is normally T+1 from trade (assuming no holidays)" {
+        val calc = ValueDateCalculator().setSpotLag("USDCAD", 1L)
+        val tradeDate = LocalDate.of(2020, 6, 1)       // Monday
+        val valueDate = calc.spotFor(tradeDate, "USDCAD")
+
+        valueDate shouldBe LocalDate.of(2020, 6, 2)
+    }
 })
 
 // generators
