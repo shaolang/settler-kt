@@ -17,13 +17,20 @@ package settler
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNot
+import io.kotest.matchers.collections.contain
 import io.kotest.matchers.longs.exactly
 import io.kotest.property.Arb
 import io.kotest.property.checkAll
 import io.kotest.property.forAll
+import io.kotest.property.arbitrary.arb
+import io.kotest.property.arbitrary.bind
 import io.kotest.property.arbitrary.localDate
+import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
+import io.kotest.property.arbitrary.set
 import io.kotest.property.arbitrary.string
+import io.kotest.property.arbitrary.stringPattern
 import java.time.LocalDate
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
@@ -57,12 +64,55 @@ class ValueDateCalculatorTest : StringSpec({
 
         valueDate shouldBe LocalDate.of(2020, 6, 2)
     }
+
+    "spot never falls on holidays" {
+        val calc = ValueDateCalculator()
+
+        checkAll(
+            genCurrencyPair,
+            let(genTradeDate,::genHolidays, ::genHolidays)) { pair, gens ->
+            val (tradeDate, baseHolidays, termHolidays) = gens
+            val baseCcy = pair.substring(0, 3)
+            val termCcy = pair.substring(3, 6)
+
+            calc.setHolidays(baseCcy, baseHolidays)
+            calc.setHolidays(termCcy, termHolidays)
+
+            val allHolidays = baseHolidays.toSet().union(termHolidays)
+
+            allHolidays shouldNot contain(calc.spotFor(tradeDate, pair))
+        }
+    }
 })
 
 // generators
 
 private val genTradeDate = Arb.localDate(minYear = 2020)
 
-private val genCurrencyPair = Arb.string(minSize = 6, maxSize = 6).map { s ->
-    s.toUpperCase()
+private val genCurrency = Arb.stringPattern("[A-Z0-9]{3}")
+
+private val genCurrencyPair = Arb.set(genCurrency, range=2..2).map { ss ->
+    ss.joinTo(StringBuilder(), separator="").toString()
+}
+
+private fun genHolidays(date: LocalDate): Arb<Set<LocalDate>> {
+    return Arb.set(Arb.long(min=1, max=10), range=0..10).map { ns ->
+        ns.map { n -> date.plusDays(n) }.toSet()
+    }
+}
+
+private fun <A, B, C> let(
+    genA: Arb<A>,
+    genBFn: (A) -> Arb<B>,
+    genCFn: (A) -> Arb<C>
+): Arb<Triple<A, B, C>> = arb {
+    val iterA = genA.generate(it).iterator()
+
+    generateSequence {
+        val a = iterA.next().value
+        val b = genBFn(a).generate(it).iterator().next().value
+        val c = genCFn(a).generate(it).iterator().next().value
+
+        Triple(a, b, c)
+    }
 }
