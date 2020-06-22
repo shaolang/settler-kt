@@ -20,15 +20,14 @@ import io.kotest.matchers.collections.contain
 import io.kotest.matchers.longs.exactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
-import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arb
-import io.kotest.property.arbitrary.localDate
-import io.kotest.property.arbitrary.long
-import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.set
-import io.kotest.property.arbitrary.stringPattern
 import io.kotest.property.checkAll
 import io.kotest.property.forAll
+import settler.generators.genCurrency
+import settler.generators.genCurrencyPair
+import settler.generators.genHolidays
+import settler.generators.genTradeDate
+import settler.generators.let
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
@@ -119,48 +118,3 @@ class ValueDateCalculatorTest : StringSpec({
         }
     }
 })
-
-// generators
-
-private val genCurrency = Arb.stringPattern("[A-Z0-9]{3}")
-
-private val genCurrencyPair = Arb.set(genCurrency, range = 2..2).map { ss ->
-    ss.joinTo(StringBuilder(), separator = "").toString()
-}
-
-private fun genHolidays(date: LocalDate): Arb<Set<LocalDate>> {
-    return Arb.set(Arb.long(min = 1, max = 10), range = 0..10).map { ns ->
-        ns.map { n -> date.plusDays(n) }.toSet()
-    }
-}
-
-private val genTradeDate = Arb.localDate(minYear = 2020)
-private fun genTradeDate(allowWeekends: Boolean = true): Arb<LocalDate> {
-    val gen = Arb.localDate(minYear = 2020)
-
-    return if (allowWeekends) {
-        gen
-    } else {
-        gen.map({ d ->
-            d.datesUntil(d.plusDays(7L)).filter { x ->
-                x.dayOfWeek !in setOf(SATURDAY, SUNDAY)
-            }.findFirst().get()
-        })
-    }
-}
-
-private fun <A, B, C> let(
-    genA: Arb<A>,
-    genBFn: (A) -> Arb<B>,
-    genCFn: (A) -> Arb<C>
-): Arb<Triple<A, B, C>> = arb {
-    val iterA = genA.generate(it).iterator()
-
-    generateSequence {
-        val a = iterA.next().value
-        val b = genBFn(a).generate(it).iterator().next().value
-        val c = genCFn(a).generate(it).iterator().next().value
-
-        Triple(a, b, c)
-    }
-}
