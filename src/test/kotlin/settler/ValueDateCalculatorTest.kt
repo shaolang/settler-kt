@@ -71,8 +71,7 @@ class ValueDateCalculatorTest : StringSpec({
         checkAll(
             genCurrencyPair,
             let(genTradeDate, ::genHolidays, ::genHolidays)
-        ) { pair, gens ->
-            val (tradeDate, baseHolidays, termHolidays) = gens
+        ) { pair, (tradeDate, baseHolidays, termHolidays) ->
             val baseCcy = pair.substring(0, 3)
             val termCcy = pair.substring(3, 6)
 
