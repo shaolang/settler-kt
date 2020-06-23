@@ -31,10 +31,9 @@ class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
         val spotLag = spotLags.getOrDefault(pair, 2L)
         val baseCcy = pair.substring(0, 3)
         val baseVD = nextBizDate(baseCcy, "", false, tradeDate, spotLag)
-
         val termCcy = pair.substring(3, 6)
         val termVD = nextBizDate(termCcy, "", false, tradeDate, spotLag)
-        val candidate = if (baseVD.isBefore(termVD)) { termVD } else { baseVD }
+        val candidate = if (baseVD.isBefore(termVD)) termVD else baseVD
 
         return nextBizDate(baseCcy, termCcy, true, candidate, 0L)
     }
