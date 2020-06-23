@@ -27,6 +27,7 @@ import settler.generators.genCurrency
 import settler.generators.genCurrencyPair
 import settler.generators.genHolidays
 import settler.generators.genTradeDate
+import settler.generators.genWorkWeek
 import settler.generators.let
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
@@ -34,11 +35,19 @@ import java.time.LocalDate
 
 class ValueDateCalculatorTest : StringSpec({
     "spot does not value on weekends" {
-        forAll(genTradeDate, genCurrencyPair) { tradeDate, pair ->
+        forAll(genTradeDate, genCurrencyPair, genWorkWeek, genWorkWeek) {
+            date, pair, ww1, ww2 ->
             val ccyHolidays = InMemoryCurrencyHolidays()
             val calc = ValueDateCalculator(ccyHolidays)
+            val baseCcy = pair.substring(0, 3)
+            val termCcy = pair.substring(3, 6)
 
-            calc.spotFor(tradeDate, pair).dayOfWeek !in setOf(SATURDAY, SUNDAY)
+            calc.setWorkWeek(baseCcy, ww1)
+            calc.setWorkWeek(termCcy, ww2)
+
+            val spotDate = calc.spotFor(date, pair)
+
+            ww1.isWorkingDay(spotDate) && ww2.isWorkingDay(spotDate)
         }
     }
 

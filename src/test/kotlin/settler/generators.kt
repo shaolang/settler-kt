@@ -16,16 +16,21 @@
 package settler.generators
 
 import io.kotest.property.Arb
+import io.kotest.property.Exhaustive
 import io.kotest.property.arbitrary.arb
 import io.kotest.property.arbitrary.localDate
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.set
 import io.kotest.property.arbitrary.stringPattern
+import io.kotest.property.exhaustive.enum
+import io.kotest.property.arbitrary.arb
+import java.time.DayOfWeek
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
 import kotlin.ranges.IntRange
+import settler.WorkWeek
 
 val genCurrency = Arb.stringPattern("[A-Z0-9]{3}")
 
@@ -53,6 +58,10 @@ fun genTradeDate(allowWeekends: Boolean = true): Arb<LocalDate> {
             }.findFirst().get()
         })
     }
+}
+
+val genWorkWeek = Arb.set(Exhaustive.enum<DayOfWeek>(), range=0..2).map {
+    WorkWeek(it)
 }
 
 fun <A, B> let(genA: Arb<A>, genBFn: (A) -> Arb<B>): Arb<Pair<A, B>> = arb {

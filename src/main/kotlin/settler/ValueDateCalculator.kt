@@ -25,6 +25,11 @@ class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
         return this
     }
 
+    fun setWorkWeek(ccy: String, workweek: WorkWeek): ValueDateCalculator {
+        workweeks.put(ccy, workweek)
+        return this
+    }
+
     fun spotFor(tradeDate: LocalDate, pair: String): LocalDate {
         val spotLag = spotLags.getOrDefault(pair, 2L)
         val baseCcy = pair.substring(0, 3)
