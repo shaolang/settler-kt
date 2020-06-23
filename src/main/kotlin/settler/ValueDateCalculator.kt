@@ -36,7 +36,7 @@ class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
         return this
     }
 
-    fun spotFor(tradeDate: LocalDate, pair: String): LocalDate {
+    fun spotFor(pair: String, tradeDate: LocalDate): LocalDate {
         val spotLag = spotLags.getOrDefault(pair, 2L)
         val baseCcy = pair.substring(0, 3)
         val basePred = nonBizDayPredicate(baseCcy)

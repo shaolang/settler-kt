@@ -44,7 +44,7 @@ class ValueDateCalculatorTest : StringSpec({
             calc.setWorkWeek(baseCcy, ww1)
             calc.setWorkWeek(termCcy, ww2)
 
-            val spotDate = calc.spotFor(date, pair)
+            val spotDate = calc.spotFor(pair, date)
 
             ww1.isWorkingDay(spotDate) && ww2.isWorkingDay(spotDate)
         }
@@ -54,7 +54,7 @@ class ValueDateCalculatorTest : StringSpec({
         checkAll(genTradeDate, genCurrencyPair) { tradeDate, pair ->
             val ccyHolidays = InMemoryCurrencyHolidays()
             val calc = ValueDateCalculator(ccyHolidays)
-            val valueDate = calc.spotFor(tradeDate, pair)
+            val valueDate = calc.spotFor(pair, tradeDate)
             val days = tradeDate.datesUntil(valueDate.plusDays(1L))
                 .filter({ d: LocalDate ->
                     WorkWeek.STANDARD_WORKWEEK.isWorkingDay(d)
@@ -69,7 +69,7 @@ class ValueDateCalculatorTest : StringSpec({
         val ccyHolidays = InMemoryCurrencyHolidays()
         val calc = ValueDateCalculator(ccyHolidays).setSpotLag("USDCAD", 1L)
         val tradeDate = LocalDate.of(2020, 6, 1) // Monday
-        val valueDate = calc.spotFor(tradeDate, "USDCAD")
+        val valueDate = calc.spotFor("USDCAD", tradeDate)
 
         valueDate shouldBe LocalDate.of(2020, 6, 2)
     }
@@ -89,7 +89,7 @@ class ValueDateCalculatorTest : StringSpec({
 
             val allHolidays = baseHolidays.toSet().union(termHolidays)
 
-            allHolidays shouldNot contain(calc.spotFor(tradeDate, pair))
+            allHolidays shouldNot contain(calc.spotFor(pair, tradeDate))
         }
     }
 
@@ -101,7 +101,7 @@ class ValueDateCalculatorTest : StringSpec({
 
             ccyHolidays.setHolidays("USD", usdHolidays)
 
-            val valueDate = calc.spotFor(tradeDate, "USD$ccy")
+            val valueDate = calc.spotFor("USD$ccy", tradeDate)
             val days = tradeDate.datesUntil(valueDate.plusDays(1L))
                 .filter({ d: LocalDate ->
                     WorkWeek.STANDARD_WORKWEEK.isWorkingDay(d)
@@ -126,7 +126,7 @@ class ValueDateCalculatorTest : StringSpec({
 
             val allHolidays = baseHolidays.toSet().union(usdHolidays)
 
-            allHolidays shouldNot contain(calc.spotFor(tradeDate, pair))
+            allHolidays shouldNot contain(calc.spotFor(pair, tradeDate))
         }
     }
 
@@ -138,6 +138,6 @@ class ValueDateCalculatorTest : StringSpec({
         calc.setWorkWeek("XYZ", xyzWW)
 
         val tradeDate = LocalDate.of(2020, 7, 14) // Tue
-        calc.spotFor(tradeDate, "USDXYZ") shouldBe LocalDate.of(2020, 7, 18)
+        calc.spotFor("USDXYZ", tradeDate) shouldBe LocalDate.of(2020, 7, 18)
     }
 })
