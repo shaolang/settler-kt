@@ -15,9 +15,9 @@
 
 package settler
 
-import java.time.DayOfWeek.SATURDAY
-import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
+
+private typealias NonBizDayPred = (LocalDate) -> Boolean
 
 class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
     fun setSpotLag(pair: String, spotLag: Long): ValueDateCalculator {
@@ -28,51 +28,72 @@ class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
     fun spotFor(tradeDate: LocalDate, pair: String): LocalDate {
         val spotLag = spotLags.getOrDefault(pair, 2L)
         val baseCcy = pair.substring(0, 3)
-        val baseVD = nextBizDate(baseCcy, "", false, tradeDate, spotLag)
+        val basePred = nonBizDayPredicate(baseCcy)
+        val baseVD = nextBizDate(
+            baseCcy, basePred, WORKING, WORKING, tradeDate, spotLag
+        )
         val termCcy = pair.substring(3, 6)
-        val termVD = nextBizDate(termCcy, "", false, tradeDate, spotLag)
+        val termPred = nonBizDayPredicate(termCcy)
+        val termVD = nextBizDate(
+            termCcy, termPred, WORKING, WORKING, tradeDate, spotLag
+        )
         val candidate = if (baseVD.isBefore(termVD)) termVD else baseVD
 
-        return nextBizDate(baseCcy, termCcy, true, candidate, 0L)
+        return nextBizDate(
+            baseCcy, basePred, termPred, isUsdNonBizDay, candidate, 0L
+        )
     }
 
     private val spotLags: MutableMap<String, Long> = mutableMapOf()
+    private val workweeks: MutableMap<String, WorkWeek> = mutableMapOf()
     private var usdWorkWeek = WorkWeek.STANDARD_WORKWEEK
+    private var isUsdNonBizDay = nonBizDayPredicate("USD")
 
     private tailrec fun nextBizDate(
-        ccy1: String,
-        ccy2: String,
-        checkUSDHoliday: Boolean,
+        ccy: String,
+        isCcy1NonBizDay: NonBizDayPred,
+        isCcy2NonBizDay: NonBizDayPred,
+        isUsdNonBizDay: NonBizDayPred,
         date: LocalDate,
         addDays: Long
     ): LocalDate {
         return when {
-            ccy1 == "USD" && usdWorkWeek.isWorkingDay(date) && addDays == 1L ->
+            ccy == "USD" && usdWorkWeek.isWorkingDay(date) && addDays == 1L ->
                 nextBizDate(
-                    ccy1, ccy2, checkUSDHoliday, date.plusDays(1L), addDays - 1
+                    ccy, isCcy1NonBizDay, isCcy2NonBizDay,
+                    isUsdNonBizDay, date.plusDays(1L), addDays - 1
                 )
 
-            date.dayOfWeek in WEEKENDS ||
-                ccyHolidays.isHoliday(ccy1, date) ||
-                ccyHolidays.isHoliday(ccy2, date) ->
+            isCcy1NonBizDay(date) || isCcy2NonBizDay(date) ->
                 nextBizDate(
-                    ccy1, ccy2, checkUSDHoliday, date.plusDays(1L), addDays
+                    ccy, isCcy1NonBizDay, isCcy2NonBizDay,
+                    isUsdNonBizDay, date.plusDays(1L), addDays
                 )
 
             addDays > 0L ->
                 nextBizDate(
-                    ccy1, ccy2, checkUSDHoliday, date.plusDays(1L), addDays - 1
+                    ccy, isCcy1NonBizDay, isCcy2NonBizDay,
+                    isUsdNonBizDay, date.plusDays(1L), addDays - 1
                 )
 
-            checkUSDHoliday && ccyHolidays.isHoliday("USD", date) ->
-                nextBizDate(ccy1, ccy2, checkUSDHoliday, date.plusDays(1L), 0)
+            isUsdNonBizDay(date) ->
+                nextBizDate(
+                    ccy, isCcy1NonBizDay, isCcy2NonBizDay,
+                    isUsdNonBizDay, date.plusDays(1L), 0
+                )
 
             else ->
                 date
         }
     }
 
+    private fun nonBizDayPredicate(ccy: String): NonBizDayPred {
+        val workweek = workweeks.getOrDefault(ccy, WorkWeek.STANDARD_WORKWEEK)
+
+        return { !workweek.isWorkingDay(it) || ccyHolidays.isHoliday(ccy, it) }
+    }
+
     private companion object {
-        @JvmField val WEEKENDS = setOf(SATURDAY, SUNDAY)
+        @JvmField val WORKING: NonBizDayPred = { false }
     }
 }
