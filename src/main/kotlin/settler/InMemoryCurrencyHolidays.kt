@@ -25,6 +25,10 @@ class InMemoryCurrencyHolidays {
     }
 
     fun isHoliday(ccy: String, date: LocalDate): Boolean {
-        return holidays.getOrDefault(ccy, emptySet<LocalDate>()).contains(date)
+        return holidays.getOrDefault(ccy, NO_HOLIDAYS).contains(date)
+    }
+
+    private companion object {
+        @JvmField val NO_HOLIDAYS: Set<LocalDate> = emptySet()
     }
 }

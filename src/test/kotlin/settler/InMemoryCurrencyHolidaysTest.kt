@@ -16,28 +16,22 @@
 package settler
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.property.Arb
-import io.kotest.property.arbitrary.element
-import io.kotest.property.forAll
-import settler.generators.genCurrency
-import settler.generators.genHolidays
-import settler.generators.let
+import io.kotest.matchers.shouldBe
 import java.time.LocalDate
 
 class InMemoryCurrencyHolidaysTest : StringSpec({
+    lateinit var holidays: InMemoryCurrencyHolidays
+    beforeTest {
+        holidays = InMemoryCurrencyHolidays()
+        holidays.setHolidays("ABC", setOf(LocalDate.of(2020, 1, 2)))
+        holidays.setHolidays("DEF", setOf(LocalDate.of(2020, 1, 9)))
+    }
+
     "isHoliday returns true when holidays set include the date" {
-        val holidays = InMemoryCurrencyHolidays()
+        holidays.isHoliday("ABC", LocalDate.of(2020, 1, 2)) shouldBe true
+    }
 
-        forAll(
-            genCurrency,
-            let(
-                genHolidays(LocalDate.now(), range = 1..10),
-                { ds -> Arb.element(ds) }
-            )
-        ) { ccy, (dateSet: Set<LocalDate>, selectedDate: LocalDate) ->
-            holidays.setHolidays(ccy, dateSet)
-
-            holidays.isHoliday(ccy, selectedDate)
-        }
+    "isHoliday returns false when holidays set doesn't include the date" {
+        holidays.isHoliday("DEF", LocalDate.of(2222, 1, 9)) shouldBe false
     }
 })
