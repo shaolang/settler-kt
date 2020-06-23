@@ -19,69 +19,53 @@ import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
 
-class ValueDateCalculator {
+class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
     private val spotLags: MutableMap<String, Long> = mutableMapOf()
-    private val holidays: MutableMap<String, Set<LocalDate>> = mutableMapOf()
 
     fun setSpotLag(pair: String, spotLag: Long): ValueDateCalculator {
         spotLags.put(pair.toUpperCase(), spotLag)
         return this
     }
 
-    fun setHolidays(ccy: String, dates: Set<LocalDate>): ValueDateCalculator {
-        holidays.put(ccy.toUpperCase(), dates)
-        return this
-    }
-
     fun spotFor(tradeDate: LocalDate, pair: String): LocalDate {
         val spotLag = spotLags.getOrDefault(pair, 2L)
         val baseCcy = pair.substring(0, 3)
-        val baseHolidays = holidays.getOrDefault(baseCcy, NO_HOLIDAYS)
-        val baseVD = nextBizDate(
-            baseCcy, baseHolidays, NO_HOLIDAYS, NO_HOLIDAYS, tradeDate,
-            spotLag
-        )
+        val baseVD = nextBizDate(baseCcy, "", false, tradeDate, spotLag)
 
         val termCcy = pair.substring(3, 6)
-        val termHolidays = holidays.getOrDefault(termCcy, NO_HOLIDAYS)
-        val termVD = nextBizDate(
-            termCcy, termHolidays, NO_HOLIDAYS, NO_HOLIDAYS, tradeDate,
-            spotLag
-        )
+        val termVD = nextBizDate(termCcy, "", false, tradeDate, spotLag)
         val candidate = if (baseVD.isBefore(termVD)) { termVD } else { baseVD }
-        val usdHols = holidays.getOrDefault("USD", NO_HOLIDAYS)
 
-        return nextBizDate("", baseHolidays, termHolidays, usdHols, candidate, 0L)
+        return nextBizDate(baseCcy, termCcy, true, candidate, 0L)
     }
 
     private tailrec fun nextBizDate(
-        ccy: String,
-        hols1: Set<LocalDate>,
-        hols2: Set<LocalDate>,
-        usdHols: Set<LocalDate>,
+        ccy1: String,
+        ccy2: String,
+        checkUSDHoliday: Boolean,
         date: LocalDate,
         addDays: Long
     ): LocalDate {
         return when {
-            date.dayOfWeek !in WEEKENDS && ccy == "USD" && addDays == 1L ->
+            date.dayOfWeek !in WEEKENDS && ccy1 == "USD" && addDays == 1L ->
                 nextBizDate(
-                    ccy, hols1, hols2, usdHols, date.plusDays(1L), addDays - 1
+                    ccy1, ccy2, checkUSDHoliday, date.plusDays(1L), addDays - 1
                 )
 
             date.dayOfWeek in WEEKENDS ||
-                hols1.contains(date) ||
-                hols2.contains(date) ->
+                ccyHolidays.isHoliday(ccy1, date) ||
+                ccyHolidays.isHoliday(ccy2, date) ->
                 nextBizDate(
-                    ccy, hols1, hols2, usdHols, date.plusDays(1L), addDays
+                    ccy1, ccy2, checkUSDHoliday, date.plusDays(1L), addDays
                 )
 
             addDays > 0L ->
                 nextBizDate(
-                    ccy, hols1, hols2, usdHols, date.plusDays(1L), addDays - 1
+                    ccy1, ccy2, checkUSDHoliday, date.plusDays(1L), addDays - 1
                 )
 
-            date in usdHols ->
-                nextBizDate(ccy, hols1, hols2, usdHols, date.plusDays(1L), 0)
+            checkUSDHoliday && ccyHolidays.isHoliday("USD", date) ->
+                nextBizDate(ccy1, ccy2, checkUSDHoliday, date.plusDays(1L), 0)
 
             else ->
                 date
@@ -90,6 +74,5 @@ class ValueDateCalculator {
 
     private companion object {
         @JvmField val WEEKENDS = setOf(SATURDAY, SUNDAY)
-        @JvmField val NO_HOLIDAYS: Set<LocalDate> = emptySet()
     }
 }
