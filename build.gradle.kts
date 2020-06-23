@@ -37,6 +37,13 @@ dependencies {
     }
 }
 
+tasks.jacocoTestReport {
+    reports {
+        xml.isEnabled = true
+        xml.destination = "$buildDir/reports/jacoco/report.xml"
+    }
+}
+
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.jvmTarget = "1.8"
 }
