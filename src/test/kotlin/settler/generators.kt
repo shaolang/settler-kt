@@ -24,13 +24,12 @@ import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.set
 import io.kotest.property.arbitrary.stringPattern
 import io.kotest.property.exhaustive.enum
-import io.kotest.property.arbitrary.arb
+import settler.WorkWeek
 import java.time.DayOfWeek
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
 import kotlin.ranges.IntRange
-import settler.WorkWeek
 
 val genCurrency = Arb.stringPattern("[A-Z0-9]{3}")
 
@@ -60,7 +59,7 @@ fun genTradeDate(allowWeekends: Boolean = true): Arb<LocalDate> {
     }
 }
 
-val genWorkWeek = Arb.set(Exhaustive.enum<DayOfWeek>(), range=0..2).map {
+val genWorkWeek = Arb.set(Exhaustive.enum<DayOfWeek>(), range = 0..2).map {
     WorkWeek(it)
 }
 

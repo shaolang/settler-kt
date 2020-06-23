@@ -137,7 +137,7 @@ class ValueDateCalculatorTest : StringSpec({
         calc.setWorkWeek("USD", usdWW)
         calc.setWorkWeek("XYZ", xyzWW)
 
-        val tradeDate = LocalDate.of(2020, 7, 14)   // Tue
+        val tradeDate = LocalDate.of(2020, 7, 14) // Tue
         calc.spotFor(tradeDate, "USDXYZ") shouldBe LocalDate.of(2020, 7, 18)
     }
 })
