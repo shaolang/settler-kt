@@ -25,6 +25,6 @@ class WorkWeek(private val weekends: Set<DayOfWeek>) {
 
     companion object {
         @JvmField val STANDARD_WORKWEEK =
-            WorkWeek(setOf(DayOfWeek.SATURDAY, DayOfWeek.SATURDAY))
+            WorkWeek(setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY))
     }
 }

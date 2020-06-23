@@ -54,6 +54,21 @@ class WorkWeekTest : StringSpec({
             ww.isWorkingDay(date) shouldBe true
         }
     }
+
+    "standard workweek treats sat and sun as weekends" {
+        val weekends = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
+        checkAll(genWeekendDate(weekends)) { date ->
+            WorkWeek.STANDARD_WORKWEEK.isWorkingDay(date) shouldBe false
+        }
+    }
+
+    "standard workweek treats mon to fri as working days" {
+        val weekends = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
+
+        checkAll(genWeekdayDate(weekends)) { date ->
+            WorkWeek.STANDARD_WORKWEEK.isWorkingDay(date) shouldBe true
+        }
+    }
 })
 
 // generators, not used anywhere else
