@@ -34,17 +34,16 @@ import java.time.LocalDate
 
 class ValueDateCalculatorTest : StringSpec({
     "spot does not value on weekends" {
-        val calc = ValueDateCalculator()
-
         forAll(genTradeDate, genCurrencyPair) { tradeDate, pair ->
+            val calc = ValueDateCalculator()
+
             calc.spotFor(tradeDate, pair).dayOfWeek !in setOf(SATURDAY, SUNDAY)
         }
     }
 
     "spot is normally T+2 from trade (assuming no holidays)" {
-        val calc = ValueDateCalculator()
-
         checkAll(genTradeDate, genCurrencyPair) { tradeDate, pair ->
+            val calc = ValueDateCalculator()
             val valueDate = calc.spotFor(tradeDate, pair)
             val days = tradeDate.datesUntil(valueDate.plusDays(1L))
                 .filter({ d: LocalDate ->
@@ -65,12 +64,11 @@ class ValueDateCalculatorTest : StringSpec({
     }
 
     "spot never falls on holidays" {
-        val calc = ValueDateCalculator()
-
         checkAll(
             genCurrencyPair,
             let(genTradeDate, ::genHolidays, ::genHolidays)
         ) { pair, (tradeDate, baseHolidays, termHolidays) ->
+            val calc = ValueDateCalculator()
             val baseCcy = pair.substring(0, 3)
             val termCcy = pair.substring(3, 6)
 
@@ -84,11 +82,12 @@ class ValueDateCalculatorTest : StringSpec({
     }
 
     "USD holidays on T+1 is considered as good biz day for pairs with USD" {
-        val calc = ValueDateCalculator()
-
         checkAll(genTradeDate(false), genCurrency) { tradeDate, ccy ->
+            val calc = ValueDateCalculator()
             val usdHolidays = setOf(tradeDate.plusDays(1L))
+
             calc.setHolidays("USD", usdHolidays)
+
             val valueDate = calc.spotFor(tradeDate, "USD$ccy")
             val days = tradeDate.datesUntil(valueDate.plusDays(1L))
                 .filter({ d: LocalDate ->
@@ -101,12 +100,11 @@ class ValueDateCalculatorTest : StringSpec({
     }
 
     "spot never falls on USD holidays even for crosses" {
-        val calc = ValueDateCalculator()
-
         checkAll(
             genCurrencyPair,
             let(genTradeDate, ::genHolidays, ::genHolidays)
         ) { pair, (tradeDate, usdHolidays, baseHolidays) ->
+            val calc = ValueDateCalculator()
             val baseCcy = pair.substring(0, 3)
 
             calc.setHolidays("USD", usdHolidays)
