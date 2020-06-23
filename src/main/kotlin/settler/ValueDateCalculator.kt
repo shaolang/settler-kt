@@ -27,6 +27,12 @@ class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
 
     fun setWorkWeek(ccy: String, workweek: WorkWeek): ValueDateCalculator {
         workweeks.put(ccy, workweek)
+
+        if (ccy == "USD") {
+            usdWorkWeek = workweek
+            isUsdNonBizDay = nonBizDayPredicate("USD")
+        }
+
         return this
     }
 

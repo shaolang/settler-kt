@@ -29,8 +29,7 @@ import settler.generators.genHolidays
 import settler.generators.genTradeDate
 import settler.generators.genWorkWeek
 import settler.generators.let
-import java.time.DayOfWeek.SATURDAY
-import java.time.DayOfWeek.SUNDAY
+import java.time.DayOfWeek
 import java.time.LocalDate
 
 class ValueDateCalculatorTest : StringSpec({
@@ -58,7 +57,7 @@ class ValueDateCalculatorTest : StringSpec({
             val valueDate = calc.spotFor(tradeDate, pair)
             val days = tradeDate.datesUntil(valueDate.plusDays(1L))
                 .filter({ d: LocalDate ->
-                    d.dayOfWeek !in setOf(SATURDAY, SUNDAY)
+                    WorkWeek.STANDARD_WORKWEEK.isWorkingDay(d)
                 })
                 .count() - 1
 
@@ -105,7 +104,7 @@ class ValueDateCalculatorTest : StringSpec({
             val valueDate = calc.spotFor(tradeDate, "USD$ccy")
             val days = tradeDate.datesUntil(valueDate.plusDays(1L))
                 .filter({ d: LocalDate ->
-                    d.dayOfWeek !in setOf(SATURDAY, SUNDAY)
+                    WorkWeek.STANDARD_WORKWEEK.isWorkingDay(d)
                 })
                 .count() - 1
 
@@ -129,5 +128,16 @@ class ValueDateCalculatorTest : StringSpec({
 
             allHolidays shouldNot contain(calc.spotFor(tradeDate, pair))
         }
+    }
+
+    "changes in USD working week is reflected in spot calculation" {
+        val usdWW = WorkWeek(setOf(DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY))
+        val xyzWW = WorkWeek(setOf())
+        val calc = ValueDateCalculator(InMemoryCurrencyHolidays())
+        calc.setWorkWeek("USD", usdWW)
+        calc.setWorkWeek("XYZ", xyzWW)
+
+        val tradeDate = LocalDate.of(2020, 7, 14)   // Tue
+        calc.spotFor(tradeDate, "USDXYZ") shouldBe LocalDate.of(2020, 7, 18)
     }
 })
