@@ -20,8 +20,6 @@ import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
 
 class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
-    private val spotLags: MutableMap<String, Long> = mutableMapOf()
-
     fun setSpotLag(pair: String, spotLag: Long): ValueDateCalculator {
         spotLags.put(pair, spotLag)
         return this
@@ -38,6 +36,9 @@ class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
         return nextBizDate(baseCcy, termCcy, true, candidate, 0L)
     }
 
+    private val spotLags: MutableMap<String, Long> = mutableMapOf()
+    private var usdWorkWeek = WorkWeek.STANDARD_WORKWEEK
+
     private tailrec fun nextBizDate(
         ccy1: String,
         ccy2: String,
@@ -46,7 +47,7 @@ class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
         addDays: Long
     ): LocalDate {
         return when {
-            date.dayOfWeek !in WEEKENDS && ccy1 == "USD" && addDays == 1L ->
+            ccy1 == "USD" && usdWorkWeek.isWorkingDay(date) && addDays == 1L ->
                 nextBizDate(
                     ccy1, ccy2, checkUSDHoliday, date.plusDays(1L), addDays - 1
                 )
