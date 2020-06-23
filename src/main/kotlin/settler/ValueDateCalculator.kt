@@ -23,7 +23,7 @@ class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
     private val spotLags: MutableMap<String, Long> = mutableMapOf()
 
     fun setSpotLag(pair: String, spotLag: Long): ValueDateCalculator {
-        spotLags.put(pair.toUpperCase(), spotLag)
+        spotLags.put(pair, spotLag)
         return this
     }
 
