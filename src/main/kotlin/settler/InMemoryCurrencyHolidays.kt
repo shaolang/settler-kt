@@ -17,14 +17,14 @@ package settler
 
 import java.time.LocalDate
 
-class InMemoryCurrencyHolidays {
+class InMemoryCurrencyHolidays : CurrencyHolidays {
     private val holidays: MutableMap<String, Set<LocalDate>> = mutableMapOf()
 
     fun setHolidays(ccy: String, holidays: Set<LocalDate>) {
         this.holidays.put(ccy, holidays)
     }
 
-    fun isHoliday(ccy: String, date: LocalDate): Boolean {
+    override fun isHoliday(ccy: String, date: LocalDate): Boolean {
         return holidays.getOrDefault(ccy, NO_HOLIDAYS).contains(date)
     }
 
