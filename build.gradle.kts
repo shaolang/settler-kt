@@ -14,10 +14,12 @@
  */
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.72"
+    id("org.jetbrains.dokka") version "0.10.1"
     id("org.jmailen.kotlinter") version "2.4.1"
     `java-library`
     jacoco
@@ -26,6 +28,7 @@ plugins {
 repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -34,6 +37,13 @@ dependencies {
 
     for (n in listOf("assertions-core", "core", "property", "runner-junit5")) {
         testImplementation("io.kotest:kotest-$n-jvm:4.0.7")
+    }
+}
+
+tasks {
+    val dokka by getting(DokkaTask::class) {
+        outputFormat = "html"
+        outputDirectory = "$buildDir/dokka"
     }
 }
 
