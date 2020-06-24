@@ -43,6 +43,14 @@ private typealias NonBizDayPred = (LocalDate) -> Boolean
  * value dates with historical and future dates.
  */
 class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
+    /**
+     * Sets the spot settlement (spot lag) for the specified currency pair.
+     *
+     * @param [pair] the currency pair to use the specific spot lag
+     * @param [spotLag] the number of business days between the trade date
+     * and value date
+     * @return the receiving `ValueDateCalculator` instance for chaining setups
+     */
     fun setSpotLag(pair: String, spotLag: Long): ValueDateCalculator {
         spotLags.put(pair, spotLag)
         return this
