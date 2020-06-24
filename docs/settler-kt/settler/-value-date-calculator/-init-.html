@@ -1,0 +1,32 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ValueDateCalculator.<init> - settler-kt</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">settler-kt</a>&nbsp;/&nbsp;<a href="../index.html">settler</a>&nbsp;/&nbsp;<a href="index.html">ValueDateCalculator</a>&nbsp;/&nbsp;<a href="./-init-.html">&lt;init&gt;</a><br/>
+<br/>
+<h1>&lt;init&gt;</h1>
+<a name="settler.ValueDateCalculator$&lt;init&gt;(settler.CurrencyHolidays)"></a>
+<code><span class="identifier">ValueDateCalculator</span><span class="symbol">(</span><span class="identifier" id="settler.ValueDateCalculator$<init>(settler.CurrencyHolidays)/ccyHolidays">ccyHolidays</span><span class="symbol">:</span>&nbsp;<a href="../-currency-holidays/index.html"><span class="identifier">CurrencyHolidays</span></a><span class="symbol">)</span></code>
+<p>A calculator for FX value dates with sensible defaults.</p>
+<p>Unless necessary, <code>ValueDateCalculator</code> requires very little configuration:
+it assumes Saturdays and Sundays as the standard workends (codified by
+<a href="../-work-week/-s-t-a-n-d-a-r-d_-w-o-r-k-w-e-e-k.html">settler.WorkWeek.STANDARD_WORKWEEK</a>) and
+<a href="https://en.wikipedia.org/wiki/T%2B2">T+2</a> as the standard spot
+settlement day. Use the method <a href="set-work-week.html">setWorkWeek</a> to support currencies with
+different work weeks; use <a href="set-spot-lag.html">setSpotLag</a> to support pairs with different
+spot settlements.</p>
+<p>All currencies and currency pairs should be in lower- or upper-case
+consistently, i.e., <code>ValueDateCalculator</code> does not defensively normalize
+them. Currency pairs should also be in the format of "xxxyyy" where "xxx"
+is the base currency and "yyy" is the term currency, e.g., "USDSGD",
+"USDJPY" are acceptable, but not "USD/CAD" and "AUD-SGD".</p>
+<p><code>ValueDateCalculator</code> also does not handle automatic trade date rollover.
+The calling application should track such rollover and pass the
+trade date to <code>ValueDateCalculator</code> for determining the value date.
+This deliberate omission allows using <code>ValueDateCalculator</code> to calculate
+value dates with historical and future dates.</p>
+</BODY>
+</HTML>
