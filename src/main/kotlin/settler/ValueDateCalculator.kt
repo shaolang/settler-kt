@@ -19,6 +19,29 @@ import java.time.LocalDate
 
 private typealias NonBizDayPred = (LocalDate) -> Boolean
 
+/**
+ * A calculator for FX value dates with sensible defaults.
+ *
+ * Unless necessary, `ValueDateCalculator` requires very little configuration:
+ * it assumes Saturdays and Sundays as the standard workends (codified by
+ * [settler.WorkWeek.STANDARD_WORKWEEK]) and
+ * [T+2]( https://en.wikipedia.org/wiki/T%2B2) as the standard spot
+ * settlement day. Use the method [setWorkWeek] to support currencies with
+ * different work weeks; use [setSpotLag] to support pairs with different
+ * spot settlements.
+ *
+ * All currencies and currency pairs should be in lower- or upper-case
+ * consistently, i.e., `ValueDateCalculator` does not defensively normalize
+ * them. Currency pairs should also be in the format of "xxxyyy" where "xxx"
+ * is the base currency and "yyy" is the term currency, e.g., "USDSGD",
+ * "USDJPY" are acceptable, but not "USD/CAD" and "AUD-SGD".
+ *
+ * `ValueDateCalculator` also does not handle automatic trade date rollover.
+ * The calling application should track such rollover and pass the
+ * trade date to `ValueDateCalculator` for determining the value date.
+ * This deliberate omission allows using `ValueDateCalculator` to calculate
+ * value dates with historical and future dates.
+ */
 class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
     fun setSpotLag(pair: String, spotLag: Long): ValueDateCalculator {
         spotLags.put(pair, spotLag)
