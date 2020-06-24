@@ -43,7 +43,7 @@ dependencies {
 tasks {
     val dokka by getting(DokkaTask::class) {
         outputFormat = "html"
-        outputDirectory = "$buildDir/dokka"
+        outputDirectory = "docs"
     }
 }
 
