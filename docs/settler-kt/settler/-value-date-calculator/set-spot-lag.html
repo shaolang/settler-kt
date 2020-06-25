@@ -11,6 +11,13 @@
 <a name="settler.ValueDateCalculator$setSpotLag(kotlin.String, kotlin.Long)"></a>
 <code><span class="keyword">fun </span><span class="identifier">setSpotLag</span><span class="symbol">(</span><span class="identifier" id="settler.ValueDateCalculator$setSpotLag(kotlin.String, kotlin.Long)/pair">pair</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.ValueDateCalculator$setSpotLag(kotlin.String, kotlin.Long)/spotLag">spotLag</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">ValueDateCalculator</span></a></code>
 <p>Sets the spot settlement (spot lag) for the specified currency pair.</p>
+<p>By default, the calculator assumes the spot settlement of all
+currency pairs as T+2, i.e., there's no need to set the spot
+settlement for T+2.</p>
+<p>This method does not defensively normalize the given pair to
+lower- or upper-case, and expects all currency pairs to be in the
+format of "xxxyyy" where "xxx" is the base currency and "yyy" is the
+term currency, e.g., "USDSGD", "USDJPY" but not "USD/CAD" and "AUD-SGD".</p>
 <h3>Parameters</h3>
 <p><a name="pair"></a>
 <code>pair</code> - the currency pair to use the specific spot lag</p>

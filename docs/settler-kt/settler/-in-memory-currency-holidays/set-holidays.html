@@ -9,6 +9,16 @@
 <br/>
 <h1>setHolidays</h1>
 <a name="settler.InMemoryCurrencyHolidays$setHolidays(kotlin.String, kotlin.collections.Set((java.time.LocalDate)))"></a>
-<code><span class="keyword">fun </span><span class="identifier">setHolidays</span><span class="symbol">(</span><span class="identifier" id="settler.InMemoryCurrencyHolidays$setHolidays(kotlin.String, kotlin.collections.Set((java.time.LocalDate)))/ccy">ccy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.InMemoryCurrencyHolidays$setHolidays(kotlin.String, kotlin.collections.Set((java.time.LocalDate)))/holidays">holidays</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-set/index.html"><span class="identifier">Set</span></a><span class="symbol">&lt;</span><span class="identifier">LocalDate</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<code><span class="keyword">fun </span><span class="identifier">setHolidays</span><span class="symbol">(</span><span class="identifier" id="settler.InMemoryCurrencyHolidays$setHolidays(kotlin.String, kotlin.collections.Set((java.time.LocalDate)))/ccy">ccy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.InMemoryCurrencyHolidays$setHolidays(kotlin.String, kotlin.collections.Set((java.time.LocalDate)))/holidays">holidays</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-set/index.html"><span class="identifier">Set</span></a><span class="symbol">&lt;</span><a href="https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html"><span class="identifier">LocalDate</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Registers the holidays of the given currency.</p>
+<p>This method does not defensively normalize the given currency
+to lower- or upper-case when registering holidays. It also does not
+defensively copy the given set of holidays when registering.</p>
+<h3>Parameters</h3>
+<p><a name="ccy"></a>
+<code>ccy</code> - the currency for registering the holidays with</p>
+<p><a name="holidays"></a>
+<code>holidays</code> - the set of dates designated as holidays for the given
+currency</p>
 </BODY>
 </HTML>

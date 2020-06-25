@@ -9,6 +9,18 @@
 <br/>
 <h1>isHoliday</h1>
 <a name="settler.InMemoryCurrencyHolidays$isHoliday(kotlin.String, java.time.LocalDate)"></a>
-<code><span class="keyword">fun </span><span class="identifier">isHoliday</span><span class="symbol">(</span><span class="identifier" id="settler.InMemoryCurrencyHolidays$isHoliday(kotlin.String, java.time.LocalDate)/ccy">ccy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.InMemoryCurrencyHolidays$isHoliday(kotlin.String, java.time.LocalDate)/date">date</span><span class="symbol">:</span>&nbsp;<span class="identifier">LocalDate</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<code><span class="keyword">fun </span><span class="identifier">isHoliday</span><span class="symbol">(</span><span class="identifier" id="settler.InMemoryCurrencyHolidays$isHoliday(kotlin.String, java.time.LocalDate)/ccy">ccy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.InMemoryCurrencyHolidays$isHoliday(kotlin.String, java.time.LocalDate)/date">date</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html"><span class="identifier">LocalDate</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Determines whether the given date is a holiday for the given currency.</p>
+<p>This method does not defensively normalize the given currency
+to lower- or upper-case when checking.</p>
+<h3>Parameters</h3>
+<p><a name="ccy"></a>
+<code>ccy</code> - the currency to determine whether the date is a holiday</p>
+<p><a name="date"></a>
+<code>date</code> - the date to determine whether it's a holiday for the
+given currency</p>
+<p><strong>Return</strong><br/>
+true when the currency and date combination is a registered
+holiday in the registry</p>
 </BODY>
 </HTML>

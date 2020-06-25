@@ -9,6 +9,8 @@
 <br/>
 <h1>CurrencyHolidays</h1>
 <code><span class="keyword">interface </span><span class="identifier">CurrencyHolidays</span></code>
+<p>An object that can determine whether the given date is a currency holiday
+of the given currency.</p>
 <h3>Functions</h3>
 <table>
 <tbody>
@@ -17,7 +19,7 @@
 <h4><a href="is-holiday.html">isHoliday</a></h4>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">isHoliday</span><span class="symbol">(</span><span class="identifier" id="settler.CurrencyHolidays$isHoliday(kotlin.String, java.time.LocalDate)/ccy">ccy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.CurrencyHolidays$isHoliday(kotlin.String, java.time.LocalDate)/date">date</span><span class="symbol">:</span>&nbsp;<span class="identifier">LocalDate</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">isHoliday</span><span class="symbol">(</span><span class="identifier" id="settler.CurrencyHolidays$isHoliday(kotlin.String, java.time.LocalDate)/ccy">ccy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.CurrencyHolidays$isHoliday(kotlin.String, java.time.LocalDate)/date">date</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html"><span class="identifier">LocalDate</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
 </tr>
 </tbody>
 </table>
@@ -29,6 +31,9 @@
 <h4><a href="../-in-memory-currency-holidays/index.html">InMemoryCurrencyHolidays</a></h4>
 </td>
 <td>
+<p>An object that can determine whether the given date is a currency holiday
+of the given currency. InMemoryCurrencyHolidays does not persist any data
+when the calling application ends.</p>
 <code><span class="keyword">class </span><span class="identifier">InMemoryCurrencyHolidays</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">CurrencyHolidays</span></a></code></td>
 </tr>
 </tbody>

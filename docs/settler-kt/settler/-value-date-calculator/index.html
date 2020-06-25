@@ -27,6 +27,9 @@ The calling application should track such rollover and pass the
 trade date to <code>ValueDateCalculator</code> for determining the value date.
 This deliberate omission allows using <code>ValueDateCalculator</code> to calculate
 value dates with historical and future dates.</p>
+<h3>Parameters</h3>
+<p><a name="ccyHolidays"></a>
+<code>ccyHolidays</code> - the registry of holidays for all currencies</p>
 <h3>Constructors</h3>
 <table>
 <tbody>
@@ -35,7 +38,8 @@ value dates with historical and future dates.</p>
 <h4><a href="-init-.html">&lt;init&gt;</a></h4>
 </td>
 <td>
-<p>A calculator for FX value dates with sensible defaults.</p>
+<p>Creates a ValueDateCalculator with the given currency holiday
+registry.</p>
 <code><span class="identifier">ValueDateCalculator</span><span class="symbol">(</span><span class="identifier" id="settler.ValueDateCalculator$<init>(settler.CurrencyHolidays)/ccyHolidays">ccyHolidays</span><span class="symbol">:</span>&nbsp;<a href="../-currency-holidays/index.html"><span class="identifier">CurrencyHolidays</span></a><span class="symbol">)</span></code></td>
 </tr>
 </tbody>
@@ -56,6 +60,7 @@ value dates with historical and future dates.</p>
 <h4><a href="set-work-week.html">setWorkWeek</a></h4>
 </td>
 <td>
+<p>Sets the work week for the specified currency.</p>
 <code><span class="keyword">fun </span><span class="identifier">setWorkWeek</span><span class="symbol">(</span><span class="identifier" id="settler.ValueDateCalculator$setWorkWeek(kotlin.String, settler.WorkWeek)/ccy">ccy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.ValueDateCalculator$setWorkWeek(kotlin.String, settler.WorkWeek)/workweek">workweek</span><span class="symbol">:</span>&nbsp;<a href="../-work-week/index.html"><span class="identifier">WorkWeek</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ValueDateCalculator</span></a></code></td>
 </tr>
 <tr>
@@ -63,7 +68,9 @@ value dates with historical and future dates.</p>
 <h4><a href="spot-for.html">spotFor</a></h4>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">spotFor</span><span class="symbol">(</span><span class="identifier" id="settler.ValueDateCalculator$spotFor(kotlin.String, java.time.LocalDate)/pair">pair</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.ValueDateCalculator$spotFor(kotlin.String, java.time.LocalDate)/tradeDate">tradeDate</span><span class="symbol">:</span>&nbsp;<span class="identifier">LocalDate</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">LocalDate</span></code></td>
+<p>Calculates the spot settlement date of the given currency pair
+and trade date.</p>
+<code><span class="keyword">fun </span><span class="identifier">spotFor</span><span class="symbol">(</span><span class="identifier" id="settler.ValueDateCalculator$spotFor(kotlin.String, java.time.LocalDate)/pair">pair</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.ValueDateCalculator$spotFor(kotlin.String, java.time.LocalDate)/tradeDate">tradeDate</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html"><span class="identifier">LocalDate</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html"><span class="identifier">LocalDate</span></a></code></td>
 </tr>
 </tbody>
 </table>

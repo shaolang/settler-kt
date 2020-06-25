@@ -10,5 +10,18 @@
 <h1>setWorkWeek</h1>
 <a name="settler.ValueDateCalculator$setWorkWeek(kotlin.String, settler.WorkWeek)"></a>
 <code><span class="keyword">fun </span><span class="identifier">setWorkWeek</span><span class="symbol">(</span><span class="identifier" id="settler.ValueDateCalculator$setWorkWeek(kotlin.String, settler.WorkWeek)/ccy">ccy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="settler.ValueDateCalculator$setWorkWeek(kotlin.String, settler.WorkWeek)/workweek">workweek</span><span class="symbol">:</span>&nbsp;<a href="../-work-week/index.html"><span class="identifier">WorkWeek</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">ValueDateCalculator</span></a></code>
+<p>Sets the work week for the specified currency.</p>
+<p>By default, the calculator assumes the work week of all currencies
+as Monday to Friday, i.e., there's no need to set the work week
+when the work week of the currency is already as such.</p>
+<p>This method does not defensively normalize the given currency to
+lower- or upper-case.</p>
+<h3>Parameters</h3>
+<p><a name="ccy"></a>
+<code>ccy</code> - the currency to use the specified work week</p>
+<p><a name="workWeek"></a>
+<code>workWeek</code> - the work week of the specified currency</p>
+<p><strong>Return</strong><br/>
+the receiving <code>ValueDateCalculator</code> instance for chaining setups</p>
 </BODY>
 </HTML>
