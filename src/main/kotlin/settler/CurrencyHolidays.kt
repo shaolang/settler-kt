@@ -17,6 +17,10 @@ package settler
 
 import java.time.LocalDate
 
+/**
+ * An object that can determine whether the given date is a currency holiday
+ * of the given currency.
+ */
 interface CurrencyHolidays {
     fun isHoliday(ccy: String, date: LocalDate): Boolean
 }
