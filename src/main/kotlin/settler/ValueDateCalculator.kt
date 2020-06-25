@@ -41,10 +41,23 @@ private typealias NonBizDayPred = (LocalDate) -> Boolean
  * trade date to `ValueDateCalculator` for determining the value date.
  * This deliberate omission allows using `ValueDateCalculator` to calculate
  * value dates with historical and future dates.
+ *
+ * @param [ccyHolidays] the registry of holidays for all currencies
+ * @constructor Creates a ValueDateCalculator with the given currency holiday
+ * registry.
  */
 class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
     /**
      * Sets the spot settlement (spot lag) for the specified currency pair.
+     *
+     * By default, the calculator assumes the spot settlement of all
+     * currency pairs as T+2, i.e., there's no need to set the spot
+     * settlement for T+2.
+     *
+     * This method does not defensively normalize the given pair to
+     * lower- or upper-case, and expects all currency pairs to be in the
+     * format of "xxxyyy" where "xxx" is the base currency and "yyy" is the
+     * term currency, e.g., "USDSGD", "USDJPY" but not "USD/CAD" and "AUD-SGD".
      *
      * @param [pair] the currency pair to use the specific spot lag
      * @param [spotLag] the number of business days between the trade date
@@ -56,6 +69,20 @@ class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
         return this
     }
 
+    /**
+     * Sets the work week for the specified currency.
+     *
+     * By default, the calculator assumes the work week of all currencies
+     * as Monday to Friday, i.e., there's no need to set the work week
+     * when the work week of the currency is already as such.
+     *
+     * This method does not defensively normalize the given currency to
+     * lower- or upper-case.
+     *
+     * @param [ccy] the currency to use the specified work week
+     * @param [workWeek] the work week of the specified currency
+     * @return the receiving `ValueDateCalculator` instance for chaining setups
+     */
     fun setWorkWeek(ccy: String, workweek: WorkWeek): ValueDateCalculator {
         workweeks.put(ccy, workweek)
 
@@ -67,6 +94,27 @@ class ValueDateCalculator(private val ccyHolidays: CurrencyHolidays) {
         return this
     }
 
+    /**
+     * Calculates the spot settlement date of the given currency pair
+     * and trade date.
+     *
+     * For T+2 currency pairs with "USD" either as base or term currency,
+     * this method will treat T+1 as a good business day when T+1 is a
+     * USD holiday.
+     *
+     * This method ensures the spot date never falls on a USD holiday
+     * even for cross pairs, i.e., currency pairs whose base and term
+     * currencies aren't USD.
+     *
+     * This method does not defensively normalize the given pair to
+     * lower- or upper-case, and expects all currency pairs to be in the
+     * format of "xxxyyy" where "xxx" is the base currency and "yyy" is the
+     * term currency, e.g., "USDSGD", "USDJPY" but not "USD/CAD" and "AUD-SGD".
+     *
+     * @param [pair] the currency pair to determine the spot settlement date for
+     * @param [tradeDate] the starting date to calculate from
+     * @return the spot settlement date
+     */
     fun spotFor(pair: String, tradeDate: LocalDate): LocalDate {
         val spotLag = spotLags.getOrDefault(pair, DEFAULT_SPOT_LAG)
         val baseCcy = pair.substring(0, 3)
