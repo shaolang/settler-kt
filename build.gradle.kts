@@ -44,6 +44,9 @@ tasks {
     val dokka by getting(DokkaTask::class) {
         outputFormat = "html"
         outputDirectory = "docs"
+        configuration {
+            jdkVersion = 8
+        }
     }
 }
 
