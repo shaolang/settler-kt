@@ -17,13 +17,47 @@ package settler
 
 import java.time.LocalDate
 
+/**
+ * An object that can determine whether the given date is a currency holiday
+ * of the given currency. InMemoryCurrencyHolidays does not persist any data
+ * when the calling application ends.
+ *
+ * InMemoryCurrencyHolidays does not defensively normalize the given currencies
+ * to lower- or upper-case when registering holidays. It also does not
+ * defensively copy the given set of holidays when registering.
+ *
+ * @constructor Creates an InMemoryCurrencyHolidays with no registered holidays.
+ */
 class InMemoryCurrencyHolidays : CurrencyHolidays {
     private val holidays: MutableMap<String, Set<LocalDate>> = mutableMapOf()
 
+    /**
+     * Registers the holidays of the given currency.
+     *
+     * This method does not defensively normalize the given currency
+     * to lower- or upper-case when registering holidays. It also does not
+     * defensively copy the given set of holidays when registering.
+     *
+     * @param [ccy] the currency for registering the holidays with
+     * @param [holidays] the set of dates designated as holidays for the given
+     * currency
+     */
     fun setHolidays(ccy: String, holidays: Set<LocalDate>) {
         this.holidays.put(ccy, holidays)
     }
 
+    /**
+     * Determines whether the given date is a holiday for the given currency.
+     *
+     * This method does not defensively normalize the given currency
+     * to lower- or upper-case when checking.
+     *
+     * @param [ccy] the currency to determine whether the date is a holiday
+     * @param [date] the date to determine whether it's a holiday for the
+     * given currency
+     * @return true when the currency and date combination is a registered
+     * holiday in the registry
+     */
     override fun isHoliday(ccy: String, date: LocalDate): Boolean {
         return holidays.getOrDefault(ccy, NO_HOLIDAYS).contains(date)
     }
