@@ -18,12 +18,27 @@ package settler
 import java.time.DayOfWeek
 import java.time.LocalDate
 
+/**
+ * An object that determines the working week.
+ *
+ * @constructor Creates a work week with the specified days as weekends.
+ */
 class WorkWeek(private val weekends: Set<DayOfWeek>) {
+    /**
+     * Determines whether the given date is a working day.
+     *
+     * @param [date] the date to determine whether its a working day
+     * @return true if the date given is a working day
+     */
     fun isWorkingDay(date: LocalDate): Boolean {
         return date.dayOfWeek !in weekends
     }
 
     companion object {
+        /**
+         * The default work week that designates Saturdays and Sundays as
+         * the weekend.
+         */
         @JvmField val STANDARD_WORKWEEK =
             WorkWeek(setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY))
     }
