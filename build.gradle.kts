@@ -36,7 +36,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     for (n in listOf("assertions-core", "core", "property", "runner-junit5")) {
-        testImplementation("io.kotest:kotest-$n-jvm:4.0.7")
+        testImplementation("io.kotest:kotest-$n-jvm:4.1.0")
     }
 }
 
